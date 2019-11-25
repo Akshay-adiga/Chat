@@ -1,47 +1,101 @@
 <html>
+    <head>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <style type="text/css">
+            body {
+                background-color: #c2c2c2;
+                height: 80vh;
 
-<head>
-</head>
-
-<body>
-
-    <input id="username" type="text"> <input type="button" value="change_username" id="send_username">
-    <input id="message" type="text"> <input type="button" value="send_message" id="send_message">
-    <div id="chatroom"></div>
-    <div id="feedback"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
-    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
-    <script>
-        $(function () {
-            console.log('inide')
-            let socket = io.connect('http://localhost:8000/');
-            let message = $("#message")
-            let username = $("#username")
-            let send_message = $("#send_message")
-            let send_username = $("#send_username")
-            let chatroom = $("#chatroom")
-            let feedback = $("#feedback"); 
-            send_message.click(() => {
-                console.log(message.val())
-                socket.emit('new_message', { message: message.val() })
+            }
+            .main-box {
+                margin-top: 20vh;
+            }
+            .mail-box{
+                background-color: #f2f2f2;
+            }
+            .header{
+                background-color:  #fff;
+            }
+            #chatroom{
+                height: 460px;
+                width: 100%;
+                overflow: auto;
+                padding: 10px;
+            }
+            .message-box{
+                width: 100%;
+                padding: 10px 5px;
+                
+            }
+            #message{
+                width: 90%;
+                height: 36px;
+                margin: 0 !important;
+                padding: 10px;
+            }
+            #send_message{
+                width: 9%;
+            }
+            .align-right{
+                text-align: right;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container main-box">
+            <div class="mail-box">
+                <div class="row m-0 pt-2 header">
+                    <div class="col-6">
+                        <span>Let's Hangout</span>
+                    </div>
+                    <div class="col-6 align-right">
+                        User: <input id="username" type="text">
+                        <input type="button" value="Update" id="send_username">
+                    </div>
+                </div>
+                <div id="chatroom"></div>
+                <div id="feedback"></div>
+                <div class="message-box">
+                    <input id="message" type="text"> <input type="button" value="Send" id="send_message">
+                </div>
+            </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+        <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+        <script>
+            $(function () {
+                let socket = io.connect('http://localhost:8000/');
+                let message = $("#message")
+                let username = $("#username")
+                let send_message = $("#send_message")
+                let send_username = $("#send_username")
+                let chatroom = $("#chatroom")
+                let feedback = $("#feedback");
+                send_message.click(() => {
+                    let msg = message.val();
+                    if(msg) {
+                        socket.emit('new_message', { message: msg })
+                        message[0].value = ""
+                    }
+                })
+                send_username.click(() => {
+                    socket.emit('change_username', { username: username.val() })
+                })
+                socket.on("new_message", data => {
+                    chatroom.append("<p class='message'>" + data.username + ":- " + data.message + "</p>")
+                    feedback.html("")
+                })
+                message.bind("keypress", () => {
+                    socket.emit('typing');
+                })
+                socket.on('typing', data => {
+                    feedback.html("<p class='typing'>" + data.username + " is typing...</p>")
+                })
             })
-            send_username.click(() => {
-                console.log(username.val())
-                socket.emit('change_username', { username: username.val() })
-            })
-            socket.on("new_message", data => {
-                console.log(data);
-                chatroom.append("<p class='message'>"+ data.username +" "+ data.message + "</p>")
-            })
-            message.bind("keypress", () => {
-                socket.emit('typing');
-            })
-            socket.on('typing', data => {
-                console.log(data)
-                feedback.html("<p class='typing'>"+ data.username +" is typing...</p>")
-            })
-        })
-    </script>
-</body>
-
+        </script>
+    </body>
 </html>
