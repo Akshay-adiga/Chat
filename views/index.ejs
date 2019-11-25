@@ -1,0 +1,47 @@
+<html>
+
+<head>
+</head>
+
+<body>
+
+    <input id="username" type="text"> <input type="button" value="change_username" id="send_username">
+    <input id="message" type="text"> <input type="button" value="send_message" id="send_message">
+    <div id="chatroom"></div>
+    <div id="feedback"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script>
+        $(function () {
+            console.log('inide')
+            let socket = io.connect('http://localhost:8000/');
+            let message = $("#message")
+            let username = $("#username")
+            let send_message = $("#send_message")
+            let send_username = $("#send_username")
+            let chatroom = $("#chatroom")
+            let feedback = $("#feedback"); 
+            send_message.click(() => {
+                console.log(message.val())
+                socket.emit('new_message', { message: message.val() })
+            })
+            send_username.click(() => {
+                console.log(username.val())
+                socket.emit('change_username', { username: username.val() })
+            })
+            socket.on("new_message", data => {
+                console.log(data);
+                chatroom.append("<p class='message'>"+ data.username +" "+ data.message + "</p>")
+            })
+            message.bind("keypress", () => {
+                socket.emit('typing');
+            })
+            socket.on('typing', data => {
+                console.log(data)
+                feedback.html("<p class='typing'>"+ data.username +" is typing...</p>")
+            })
+        })
+    </script>
+</body>
+
+</html>
