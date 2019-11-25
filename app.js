@@ -1,14 +1,17 @@
 const express = require('express');
 const app = express();
+const compression = require('compression');
+app.use(compression());
 app.set("view engine", 'ejs');
 app.use(express.static('public'));
-app.use(favicon(__dirname + '/build/favicon.ico'));
+const favicon = require('express-favicon');
 
-app.get('/', (req, res) => {
+app.get('/*', (req, res) => {
     res.render('index')
 })
 
 let server = app.listen(8000)
+
 const io = require('socket.io')(server)
 io.on('connection', (socket) => {
     console.log("new user connected");
