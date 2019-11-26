@@ -4,7 +4,6 @@ const compression = require('compression');
 app.use(compression());
 app.set("view engine", 'ejs');
 app.use(express.static('public'));
-const favicon = require('express-favicon');
 
 app.get('/*', (req, res) => {
     res.render('index')
