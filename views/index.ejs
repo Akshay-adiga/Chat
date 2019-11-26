@@ -62,13 +62,14 @@
             </div>
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
-        <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+        <script src="https://code.jquery.com/jquery-latest.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
             integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous"></script>
         <script>
             $(function () {
-                let socket = io.connect('http://localhost:8000/');
+                console.log(window.location.origin)
+                let socket = io.connect(window.location.origin);
                 let message = $("#message")
                 let username = $("#username")
                 let send_message = $("#send_message")
