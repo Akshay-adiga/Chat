@@ -4,12 +4,13 @@ const compression = require('compression');
 app.use(compression());
 app.set("view engine", 'ejs');
 app.use(express.static('public'));
+const port = process.env.PORT || 8080;
 
 app.get('/*', (req, res) => {
     res.render('index')
 })
 
-let server = app.listen(8000)
+let server = app.listen(port)
 
 const io = require('socket.io')(server)
 io.on('connection', (socket) => {
